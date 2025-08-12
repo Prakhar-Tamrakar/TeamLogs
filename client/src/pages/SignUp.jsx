@@ -1,10 +1,37 @@
-import React from "react";
-import { Mail, Lock, ArrowRight, User } from "lucide-react";
+import React, { useState } from "react";
+import { User, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function SignIn() {
-  const navigate = useNavigate();
 
+export default function SignUp() {
+
+    const[formData , setFormData] = useState({
+        username : "",
+        email : "" , 
+        password : "",
+    })
+    console.log(formData)
+
+
+    const handleChange =  (e) => { 
+        setFormData((prev)=>({...prev , [e.target.id] : e.target.value}))
+    } 
+
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+
+        try {
+
+            
+
+        
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -14,14 +41,39 @@ export default function SignIn() {
             <User className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Welcome Back
+            Create Account
           </h1>
-          <p className="text-gray-600">Sign in to continue to your dashboard</p>
+          <p className="text-gray-600">
+            Join us to manage your tasks efficiently
+          </p>
         </div>
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <form className="space-y-6">
+            {/* Username */}
+            <div className="space-y-2">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Username
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="username"
+                  type="text"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter your username"
+                />
+              </div>
+            </div>
+
             {/* Email */}
             <div className="space-y-2">
               <label
@@ -37,6 +89,9 @@ export default function SignIn() {
                 <input
                   id="email"
                   type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+
                   className="block w-full pl-10 pr-3 py-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your email"
                 />
@@ -58,6 +113,9 @@ export default function SignIn() {
                 <input
                   id="password"
                   type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+
                   className="block w-full pl-10 pr-3 py-3 border rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Enter your password"
                 />
@@ -69,19 +127,19 @@ export default function SignIn() {
               type="submit"
               className="w-full flex items-center justify-center px-4 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200"
             >
-              Sign In
+              Create Account
               <ArrowRight className="ml-2 h-4 w-4" />
             </button>
           </form>
 
-          {/* Switch to Signup */}
+          {/* Switch to Login */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don’t have an account?{" "}
-              <Link to="/signup">
-                <button className="font-medium text-blue-500 hover:text-blue-600 transition-colors">
-                  Sign Up
-                </button>
+              Already have an account?{" "}
+              <Link to="/signin">
+              <button   className="font-medium text-blue-500 hover:text-blue-600 transition-colors">
+                Sign In
+              </button>
               </Link>
             </p>
           </div>

@@ -1,7 +1,7 @@
 import express from 'express' 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import employeeRouter from "./routes/employee.route.js"
+import employeeRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 
 dotenv.config();
