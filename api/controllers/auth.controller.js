@@ -1,4 +1,3 @@
-import Employee from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import nodemailer from "nodemailer";
 
@@ -18,7 +17,11 @@ export const signup = async (req, res , next) => {
 
   try {
     await newUser.save();
-    res.status(201).json("user created successfully");
+    res.status(201).json({
+        success : true,
+        message : "user created successfully"
+
+    });
   } catch (error) {
     // res.status(500).json(error.message)
     next(error)
@@ -66,7 +69,7 @@ export const sendOtp = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        message: "OTP sent successfully",
+        message: "OTP sent to entered email successfully",
         otp,
         messageId: info.messageId,
       });
@@ -82,10 +85,9 @@ export const sendOtp = async (req, res) => {
 
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
-  const validUser = await User.findOne({ email });
   const validOtp = await Otp.findOne({ email, otp });
 
-  if (!validUser || !validOtp) {
+  if ( !validOtp) {
     return res.status(401).json({
       success: false,
       message: "Invalid OTP or user not found",
@@ -93,11 +95,14 @@ export const verifyOtp = async (req, res) => {
   }
   await Otp.deleteMany({ email });
 
-  const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
-  const { password, ...rest } = validUser._doc;
+   const user = await User.findOneAndUpdate(
+      { email },
+      { $set: { isVerified: true } },
+      { new: true }
+    );
+  
 
   res
-    .cookie("access_token", token, { httpOnly: true })
     .status(200)
-    .json({ success: true, ...rest });
+    .json({ success: true , message: "Email verified successfully"});
 };
