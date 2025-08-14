@@ -9,7 +9,7 @@ const App = () => {
   return (
     <BrowserRouter>
       {/* Toast container outside Routes */}
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={600} />
       
       <Routes>
         <Route path="/" element={<Home />} />

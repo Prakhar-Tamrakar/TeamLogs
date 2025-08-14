@@ -41,7 +41,7 @@ export default function SignUp() {
         toast.error(signupData.message || "Signup failed");
       }
 
-      const otpRes = await fetch("/api/auth/send-otp", {
+      const otpRes = await fetch("/api/auth/signup-send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -61,7 +61,7 @@ export default function SignUp() {
   };
 
  const handleVerifyOtp = async (otp) => {
-  const res = await fetch("/api/auth/verify-email", {
+  const res = await fetch("/api/auth/signup-verify-email", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: formData.email, otp })
@@ -193,7 +193,7 @@ export default function SignUp() {
           {otpForm && <OtpForm onSubmit={handleVerifyOtp} />}
 
           {/* Switch to Login */}
-          <div className="mt-6 text-center">
+          <div className="mt-3 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Already have an account?{" "}
               <Link to="/signin">
