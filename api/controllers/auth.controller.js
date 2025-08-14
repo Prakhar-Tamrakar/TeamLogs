@@ -148,3 +148,26 @@ export const signin = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const signinVerifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+  const validUser = await User.findOne({ email });
+  const validOtp = await Otp.findOne({ email, otp });
+
+  if (!validUser || !validOtp) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid OTP or user not found",
+    });
+  }
+  await Otp.deleteMany({ email });
+
+  const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+  const { password, ...rest } = validUser._doc;
+
+  res
+    .cookie("access_token", token, { httpOnly: true })
+    .status(200)
+    .json({ success: true, ...rest });
+};

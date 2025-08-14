@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext"; // adjust path if needed
 import { toast } from "react-toastify";
 import PasswordCheck from "../components/PasswordCheck";
+import OtpForm from "../components/OtpForm";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -11,13 +12,14 @@ export default function SignIn() {
 
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
+  const [signinWithOtp , setSigninWithOtp] = useState(false);
 
-  {
-    /* check email for signin */
-  }
 
-  const validEmailChange = () =>{
+  const handleShowEmailForm = () =>{
     setValidEmail(false);
+  }
+  const handleShowOtpForm = () =>{
+    setSigninWithOtp(true);
   }
 
 
@@ -37,6 +39,22 @@ export default function SignIn() {
     toast.success(data.message);
     setValidEmail(true)
   };
+
+
+  const handleOtpVerification = async (otp) =>{
+    const res = await fetch("/api/auth/signin-Verify-Otp" , {
+      method : "POST", 
+      headers : {"content-type" : "application/json"},
+      body : JSON.stringify({email , otp})
+    })
+    const data = await res.json();
+    if(!data.success) { 
+      toast.error(data.error);
+      return;
+    }
+    navigate("/");
+
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center  p-4">
@@ -65,7 +83,7 @@ export default function SignIn() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
           <form
             onSubmit={handleEmailCheck}
-            className={`${validEmail ? "hidden" : ""} space-y-6`}
+            className={`${validEmail ? "hidden" : ""} ${signinWithOtp ? "hidden" : ""} space-y-6`}
           >
             {/* Email */}
             <div className="space-y-2">
@@ -104,21 +122,19 @@ export default function SignIn() {
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Don’t have an account?{" "}
+                  First time here?{" "}
                   <Link to="/signup">
                     <button className="font-medium text-blue-500 hover:text-blue-600 transition-colors">
-                      Sign Up
+                      Create an account
                     </button>
                   </Link>
                 </p>
               </div>
               {/* -------------------------------------------- */}
           </form>
-
-
-          {validEmail && <PasswordCheck email={email} validEmailChange={validEmailChange} />}
-
-        </div>
+          {validEmail && !signinWithOtp && <PasswordCheck email={email} validEmailChange={handleShowEmailForm} signinWithOtp = {handleShowOtpForm}/>}
+          {signinWithOtp && <OtpForm email = {email} onSubmit={handleOtpVerification}/>}
+        </div > 
 
         {/* Footer */}
         <div className="mt-8 text-center">

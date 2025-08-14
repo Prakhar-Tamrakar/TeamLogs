@@ -41,7 +41,7 @@ export default function SignUp() {
         toast.error(signupData.message || "Signup failed");
       }
 
-      const otpRes = await fetch("/api/auth/signup-send-otp", {
+      const otpRes = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -60,32 +60,27 @@ export default function SignUp() {
     }
   };
 
- const handleVerifyOtp = async (otp) => {
-  const res = await fetch("/api/auth/signup-verify-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: formData.email, otp })
-  });
+  const handleVerifyOtp = async (otp) => {
+    const res = await fetch("/api/auth/signup-verify-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email, otp }),
+    });
 
-  const data = await res.json();
-  if (!data.success) {
-    toast.error(data.message);
-    return;
-  }
-  toast.success(data.message);
-  navigate("/signin");
-};
-
+    const data = await res.json();
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+    toast.success(data.message);
+    navigate("/signin");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
-
       {/* Theme Toggle Button */}
       <div className="absolute top-4 right-4">
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded text-xl"
-        >
+        <button onClick={toggleTheme} className="p-2 rounded text-xl">
           {theme === "dark" ? "🌙" : "🌞"}
         </button>
       </div>
@@ -102,11 +97,20 @@ export default function SignUp() {
           <p className="text-gray-600 dark:text-gray-300">
             Join us to manage your tasks efficiently
           </p>
+          {otpForm && (
+            <p className="text-gray-600 dark:text-gray-300">
+              we have just sent an mail on{" "}
+              <span className="font-semibold"> {formData.email}</span>
+            </p>
+          )}
         </div>
 
         {/* Form Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-8">
-          <form onSubmit={handleSubmit} className={`space-y-4 ${otpForm ? "hidden" : ""}`}>
+          <form
+            onSubmit={handleSubmit}
+            className={`space-y-4 ${otpForm ? "hidden" : ""}`}
+          >
             {/* Username */}
             <div className="space-y-2">
               <label
@@ -190,7 +194,9 @@ export default function SignUp() {
           </form>
 
           {/* OTP Form */}
-          {otpForm && <OtpForm onSubmit={handleVerifyOtp} />}
+          {otpForm && (
+            <OtpForm email={formData.email} onSubmit={handleVerifyOtp} />
+          )}
 
           {/* Switch to Login */}
           <div className="mt-3 text-center">

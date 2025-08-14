@@ -1,40 +1,67 @@
 import React, { useState } from "react";
-import { Mail, Lock, ArrowRight,ArrowLeft, User } from "lucide-react";
-import { Link , useNavigate } from "react-router-dom";
+import { Mail, Lock, ArrowRight, ArrowLeft, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const PasswordCheck = ({ email , validEmailChange }) => {
+const PasswordCheck = ({ email, validEmailChange, signinWithOtp }) => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const [password, setPassword] = useState("");
+  const [isOtpLoading, setIsOtpLoading] = useState(false); // loading state for OTP
 
-  const [password , setPassword] = useState("");
-  console.log(password)
-
-  const handlePasswordCheck = async(e) =>{
+  const handlePasswordCheck = async (e) => {
     e.preventDefault();
-    const res = await fetch("api/auth/signin" , {
-      method : "POST",
-      headers : {"content-type" : "application/json"},
-      body : JSON.stringify({email , password})
-    })
+    const res = await fetch("api/auth/signin", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
     const data = await res.json();
-    if(!data.success){
+    if (!data.success) {
       toast.error("invalid credential");
-      return 
+      return;
     }
     navigate("/");
+  };
 
-  }
+  const handleSigninWithOtp = async () => {
+    try {
+      setIsOtpLoading(true);
+      const otpRes = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const otpData = await otpRes.json();
+
+      if (otpData.success) {
+        toast.success(otpData.message);
+        signinWithOtp();
+      } else {
+        toast.error(otpData.message || "Failed to send OTP");
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsOtpLoading(false);
+    }
+  };
 
   return (
     <div>
-        <div className="relative inset-0 ">
-            <button className="bg-blue-500 p-1 rounded-full mb-3" onClick={validEmailChange}>
-                <ArrowLeft className="text-white"/>
-            </button>
-
-        </div>
       <form className="space-y-6" onSubmit={handlePasswordCheck}>
+        <div className="relative inset-0 flex items-center py-1 font-semibold text-gray-300 gap-2">
+          <button
+            type="button"
+            className="bg-blue-500 p-1 rounded-full"
+            onClick={validEmailChange}
+          >
+            <ArrowLeft className="text-white" size={20} />
+          </button>
+          Back
+        </div>
+
         {/* Password */}
         <div className="space-y-2">
           <label
@@ -51,8 +78,7 @@ const PasswordCheck = ({ email , validEmailChange }) => {
               id="password"
               type="password"
               value={password}
-
-              onChange={(e)=>(setPassword(e.target.value))}
+              onChange={(e) => setPassword(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
               placeholder="Enter your password"
             />
@@ -67,13 +93,21 @@ const PasswordCheck = ({ email , validEmailChange }) => {
           Continue
           <ArrowRight className="ml-2 h-4 w-4" />
         </button>
-
-        <div className="mt-6 text-center">
-          <button className="font-medium text-blue-500 hover:text-blue-600 transition-colors">
-            Use a one-time code instead
-          </button>
-        </div>
       </form>
+
+      {/* OTP Sign-in Link */}
+      <div className="mt-6 text-center">
+        <button
+          onClick={handleSigninWithOtp}
+          disabled={isOtpLoading}
+          className="font-medium text-blue-500 hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+        >
+          {isOtpLoading ? (
+            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2" />
+          ) : null}
+          Use a one-time code instead
+        </button>
+      </div>
     </div>
   );
 };
