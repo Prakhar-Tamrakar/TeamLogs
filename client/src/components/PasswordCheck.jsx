@@ -3,15 +3,22 @@ import { Mail, Lock, ArrowRight, ArrowLeft, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { signInFailure , signInStart, signInSuccess } from "../redux/user/userSlice";
+
 const PasswordCheck = ({ email, validEmailChange, signinWithOtp }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
 
   const [password, setPassword] = useState("");
   const [isOtpLoading, setIsOtpLoading] = useState(false); // loading state for OTP
 
   const handlePasswordCheck = async (e) => {
     e.preventDefault();
-    const res = await fetch("api/auth/signin", {
+    dispatch(signInStart());
+   try {
+     const res = await fetch("api/auth/signin", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -19,9 +26,15 @@ const PasswordCheck = ({ email, validEmailChange, signinWithOtp }) => {
     const data = await res.json();
     if (!data.success) {
       toast.error("invalid credential");
+      dispatch(signInFailure(data.message))
       return;
     }
+    dispatch(signInSuccess(data.rest));
     navigate("/");
+    
+   } catch (error) {
+      dispatch(signInFailure(error.message))
+   }
   };
 
   const handleSigninWithOtp = async () => {

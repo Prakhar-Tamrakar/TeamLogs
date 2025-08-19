@@ -3,10 +3,9 @@ import { User, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import OtpForm from "../components/OtpForm";
-import { ThemeContext } from "../context/ThemeContext"; // <-- Import Theme Context
+import ThemeSwitcher from "../components/ThemeSwitcher";
 
 export default function SignUp() {
-  const { theme, toggleTheme } = useContext(ThemeContext); // <-- Use theme globally
 
   const [formData, setFormData] = useState({
     username: "",
@@ -79,11 +78,13 @@ export default function SignUp() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       {/* Theme Toggle Button */}
-      <div className="absolute top-4 right-4">
+      {/* <div className="absolute top-4 right-4">
         <button onClick={toggleTheme} className="p-2 rounded text-xl">
           {theme === "dark" ? "🌙" : "🌞"}
         </button>
-      </div>
+      </div> */}
+      <ThemeSwitcher className="absolute top-4 right-4"/>
+      
 
       <div className="w-full max-w-md">
         {/* Header */}
