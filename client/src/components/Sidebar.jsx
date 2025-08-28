@@ -196,7 +196,7 @@ const SideBar = ({
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between gap-4 sm:gap-0 px-4 py-5 border-b border-gray-200 dark:border-gray-700 min-w-[72px]">
+          <div className="flex items-center justify-between gap-4 sm:gap-0 px-4 py-5  border-gray-200 dark:border-gray-700 min-w-[64px]">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <LayoutDashboard className="w-5 h-5 text-white" />
@@ -218,7 +218,7 @@ const SideBar = ({
             <button
               onClick={toggleSidebar}
               className={` ${
-                isOpen ? "flex" : "hidden md:flex"
+                isOpen ? "flex" : "hidden sm:flex"
               } md:flex p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0`}
             >
               {isOpen ? (
@@ -274,9 +274,7 @@ const SideBar = ({
               );
             })}
           </nav>
-
-          {/* Theme Switcher */}
-          <ThemeSwitcher className={`absolute bottom-10 ${isOpen ? "left-20" : "left-2"}`} />
+        
         </div>
       </motion.div>
     </>

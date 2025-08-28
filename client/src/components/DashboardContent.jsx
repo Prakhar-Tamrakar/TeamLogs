@@ -63,7 +63,7 @@ const DashboardContent = ({ activeSection }) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div 
-      className="mt-16"
+      className="mt-20 xs:mt-24"
         key={activeSection} // triggers animation on change
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

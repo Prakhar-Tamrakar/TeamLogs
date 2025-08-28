@@ -20,6 +20,7 @@ const PasswordCheck = ({ email, validEmailChange, signinWithOtp }) => {
    try {
      const res = await fetch("api/auth/signin", {
       method: "POST",
+      credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email, password }),
     });

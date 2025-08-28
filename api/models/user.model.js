@@ -20,6 +20,37 @@ const userSchema = new  mongoose.Schema({
         type : Boolean,
         default : false
     },
+    number : {
+        type : Number
+    },
+    dob : {
+        type : Date,
+    },
+    location : {
+        type : String
+    },
+    skills : {
+        type : Array
+    },
+    gender : {
+        type : String
+    },
+    linkedin : {
+        type : String
+    },
+    about : {
+        type : String
+    },
+    jobTitle:{
+        type : String
+    },
+    officeLocation : {
+        type : String
+    },
+    empType : {
+        type : String
+    },
+
     avatar : {
         type : String,
         default : "https://ik.imagekit.io/prakhar3091/ProfileImages/1753449856775_user_9684549_CEq_sGkzj.png"
