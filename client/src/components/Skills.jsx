@@ -10,6 +10,7 @@ import { skillsDatabase } from "../constants/Constant";
 
 const Skills = () => {
   const [skills, setSkills] = useState([]);
+  console.log(skills)
   const [skillInput, setSkillInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
 

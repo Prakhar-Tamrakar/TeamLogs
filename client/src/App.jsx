@@ -31,13 +31,6 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        {/* <Route path="/tasks >" element={<Tasks />} />
-        <Route path="/completed/:status >" element={<Tasks />} />
-        <Route path="/in-progress/:status >" element={<SignUp />} />
-        <Route path="/todo/:status >" element={<SignUp />} />
-        <Route path="/team >" element={<Users />} />
-        <Route path="/trashed >" element={<Trash />} />
-        <Route path="/task/:id >" element={<TaskDetails />} /> */}
       </Routes>
     </BrowserRouter>
   );

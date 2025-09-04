@@ -1,14 +1,15 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
 import Settings from "../pages/Settings";
 
-const DashboardContent = ({ activeSection }) => {
+const DashboardContent = () => {
+  const activeSection = useSelector((state) => state.section.active);
+
   const Overview = () => (
-    <div className="">
+    <div>
       <h1 className="text-2xl font-bold">Welcome back!</h1>
       <p className="text-gray-600 mb-4">Here's a quick summary of today.</p>
-
-      {/* Simple stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded shadow">
           <p className="text-sm text-gray-500">Revenue</p>
@@ -41,30 +42,22 @@ const DashboardContent = ({ activeSection }) => {
 
   const renderSection = () => {
     switch (activeSection) {
-      case "overview":
-        return <Overview />;
-      case "analytics":
-        return <Section title="Analytics" />;
-      case "users":
-        return <Section title="Users" />;
-      case "reports":
-        return <Section title="Reports" />;
-      case "performance":
-        return <Section title="Performance" />;
-      case "notifications":
-        return <Section title="notifications" />;
-      case "settings":
-        return <Settings />;
-      default:
-        return <Overview />;
+      case "overview": return <Overview />;
+      case "analytics": return <Section title="Analytics" />;
+      case "users": return <Section title="Users" />;
+      case "reports": return <Section title="Reports" />;
+      case "performance": return <Section title="Performance" />;
+      case "notifications": return <Section title="Notifications" />;
+      case "settings": return <Settings />;
+      default: return <Overview />;
     }
   };
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div 
-      className="mt-20 xs:mt-24"
-        key={activeSection} // triggers animation on change
+      <motion.div
+        className="mt-20 xs:mt-24"
+        key={activeSection}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}

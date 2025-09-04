@@ -42,13 +42,12 @@ import {
 import { toast } from "react-toastify";
 
 const Settings = () => {
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
 
   // !------------------- imagekit--------------------------------------
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(currentUser.avatar);
-  const [loading , setLoading] = useState(false)
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -101,8 +100,9 @@ const Settings = () => {
     e.preventDefault();
     dispatch(updateUserStart());
 
-    let updatedUserData;
+    let updatedUserData = { ...userData };
     // ! change profile image
+
     if (selectedFile) {
       try {
         const authRes = await fetch("/api/imagekit-auth");
@@ -253,35 +253,6 @@ const Settings = () => {
                     placeholder="Enter your email"
                   />
                 </div>
-
-                {/* // *  Password */}
-                {/* <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    <Lock className="inline h-4 w-4 mr-2" />
-                    Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      value={userData.password}
-                      onChange={handleChange}
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10 dark:bg-gray-700 dark:text-gray-100"
-                      placeholder="Change password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-300"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                </div> */}
 
                 {/* // *  Phone */}
                 <div>

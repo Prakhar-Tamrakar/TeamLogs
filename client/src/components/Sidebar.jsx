@@ -11,14 +11,13 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import ThemeSwitcher from "./ThemeSwitcher";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveSection } from "../redux/section/sectionSlice";
 
-const SideBar = ({
-  isOpen,
-  toggleSidebar,
-  activeSection,
-  setActiveSection,
-}) => {
+const SideBar = ({ isOpen, toggleSidebar }) => {
+  const dispatch = useDispatch();
+  const activeSection = useSelector((state) => state.section.active);
+
   const menuItems = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
@@ -28,6 +27,10 @@ const SideBar = ({
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "settings", label: "Settings", icon: Settings },
   ];
+
+  const handleSectionClick = (id) => {
+    dispatch(setActiveSection(id));
+  };
 
   return (
     <>
@@ -56,7 +59,7 @@ const SideBar = ({
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between gap-4 sm:gap-0 px-4 py-5  border-gray-200 dark:border-gray-700 min-w-[64px]">
+          <div className="flex items-center justify-between gap-4 sm:gap-0 px-4 py-5 border-gray-200 dark:border-gray-700 min-w-[64px]">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                 <LayoutDashboard className="w-5 h-5 text-white" />
@@ -77,7 +80,7 @@ const SideBar = ({
             </div>
             <button
               onClick={toggleSidebar}
-              className={` ${
+              className={`${
                 isOpen ? "flex" : "hidden sm:flex"
               } md:flex p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0`}
             >
@@ -98,7 +101,7 @@ const SideBar = ({
                   key={id}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setActiveSection(id)}
+                  onClick={() => handleSectionClick(id)}
                   transition={{ duration: 0.2 }}
                   className={`w-full flex items-center px-3 py-2.5 rounded-lg transition-colors duration-200 
                     ${
@@ -134,7 +137,6 @@ const SideBar = ({
               );
             })}
           </nav>
-        
         </div>
       </motion.div>
     </>
