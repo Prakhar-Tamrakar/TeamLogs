@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import cookieParser from "cookie-parser";
+import ImageKit from 'imagekit';     
+
 
 dotenv.config();
 
@@ -18,6 +20,21 @@ const app = express();
 app.use(express.json())
 app.use(cookieParser());
 
+
+const imagekit = new ImageKit({
+  urlEndpoint: 'https://ik.imagekit.io/prakhar3091/', 
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY
+});
+
+
+app.get('/api/imagekit-auth', (req, res) => {
+  const result = imagekit.getAuthenticationParameters();
+  res.send({
+    ...result,
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  });
+});
 
 
 

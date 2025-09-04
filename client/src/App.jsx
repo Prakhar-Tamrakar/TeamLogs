@@ -5,6 +5,10 @@ import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import Tasks from "./pages/Tasks";
+import Users from "./pages/Users";
+import Trash from "./pages/Trash";
+import TaskDetails from "./pages/TaskDetails";
 
 const App = () => {
   const theme = useSelector((state) => state.theme.mode);
@@ -27,6 +31,13 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        {/* <Route path="/tasks >" element={<Tasks />} />
+        <Route path="/completed/:status >" element={<Tasks />} />
+        <Route path="/in-progress/:status >" element={<SignUp />} />
+        <Route path="/todo/:status >" element={<SignUp />} />
+        <Route path="/team >" element={<Users />} />
+        <Route path="/trashed >" element={<Trash />} />
+        <Route path="/task/:id >" element={<TaskDetails />} /> */}
       </Routes>
     </BrowserRouter>
   );

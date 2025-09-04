@@ -19,6 +19,16 @@ import {
   MapPinned,
   Briefcase,
 } from "lucide-react";
+
+import {
+  ImageKitAbortError,
+  ImageKitInvalidRequestError,
+  ImageKitServerError,
+  ImageKitUploadNetworkError,
+  upload,
+} from "@imagekit/react";
+
+
 import { useState, useRef } from "react";
 import Skills from "../components/Skills";
 
@@ -32,6 +42,21 @@ import {
 import { toast } from "react-toastify";
 
 const Settings = () => {
+  const { currentUser, error } = useSelector((state) => state.user);
+
+  // !------------------- imagekit--------------------------------------
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(currentUser.avatar);
+  const [loading , setLoading] = useState(false)
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) setSelectedFile(file);
+  };
+
+  // !------------------------------------------
+
   const [showPassword, setShowPassword] = useState(false);
   const [skills, setSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("");
@@ -39,8 +64,6 @@ const Settings = () => {
 
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
-
-  const { currentUser, error, loading } = useSelector((state) => state.user);
 
   const [userData, setUserData] = useState({
     username: currentUser.username || "",
@@ -58,7 +81,7 @@ const Settings = () => {
     skills: currentUser.skills || [],
   });
 
-
+  
   // !this function handle changes in input fields
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -72,23 +95,54 @@ const Settings = () => {
     fileInputRef.current.click();
   };
 
-  //!this function store selected file
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      console.log("Selected file:", file.name);
-    }
-  };
 
   // ! function that handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(updateUserStart());
+
+    let updatedUserData;
+    // ! change profile image
+    if (selectedFile) {
+      try {
+        const authRes = await fetch("/api/imagekit-auth");
+        const { signature, expire, token, publicKey } = await authRes.json();
+
+        const uploadResponse = await upload({
+          file: selectedFile,
+          fileName: `${Date.now()}_${selectedFile.name}`,
+          folder: "ProfileImages",
+          publicKey,
+          token,
+          expire,
+          signature,
+        });
+
+        let imageUrl = uploadResponse.url;
+        updatedUserData = {...userData , avatar : imageUrl}
+        setAvatarUrl(imageUrl);
+      } catch (error) {
+        let message = "Image upload failed";
+        if (error instanceof ImageKitAbortError) message = "Upload aborted";
+        else if (error instanceof ImageKitInvalidRequestError)
+          message = "Invalid upload request";
+        else if (error instanceof ImageKitUploadNetworkError)
+          message = "Network error during upload";
+        else if (error instanceof ImageKitServerError)
+          message = "ImageKit server error";
+
+        alert(message);
+        dispatch(updateUserFailure(message));
+        return;
+      }
+    }
+    //!----------------------------------
+
     try {
-      dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(updatedUserData),
       });
       const data = await res.json();
       if (!data.success) {
@@ -96,14 +150,13 @@ const Settings = () => {
         dispatch(updateUserFailure(data.message));
         return;
       }
-      console.log(data)
       dispatch(updateUserSuccess(data.rest));
       // setUserData(data.rest);
       toast.success("Profile updated!");
     } catch (error) {
       dispatch(updateUserFailure(error.message));
       toast.error("Update failed");
-    } 
+    }
   };
 
   return (
@@ -125,13 +178,24 @@ const Settings = () => {
           {/* // * Profile Picture */}
           <div className="relative -mt-12 ml-6 w-fit bg-white dark:bg-gray-700 p-1 rounded-full shadow-lg">
             <div className="relative">
-              <div
-                className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center
+              {avatarUrl ? (
+                 <img
+                  className="h-24 w-24 rounded-full object-cover self-center  cursor-pointer"
+                  src={
+                    selectedFile ? URL.createObjectURL(selectedFile) : avatarUrl
+                  }
+                  alt="user"
+                  onClick={() => fileInputRef.current.click()}
+                />
+              ) : (
+                <div
+                  className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center
                bg-gradient-to-br from-blue-400 to-blue-600 
                dark:from-gray-800 dark:via-blue-700 dark:to-gray-600 "
-              >
-                <User className="h-12 w-12 text-white" />
-              </div>
+                >
+                  <User className="h-12 w-12 text-white" />
+                </div>
+              )}
               <button
                 onClick={handleButtonClick}
                 type="button"
@@ -142,7 +206,8 @@ const Settings = () => {
                   type="file"
                   ref={fileInputRef}
                   className="hidden"
-                  onChange={handleFileChange}
+                  accept="image/*"
+                  onChange={handleFileSelect}
                 />
               </button>
             </div>
@@ -468,9 +533,9 @@ const Settings = () => {
                 type="submit"
                 disabled={loading}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 
-    dark:bg-gradient-to-r dark:from-gray-800 dark:via-blue-700 dark:to-gray-900 
-    text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 shadow-md
-    hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                          dark:bg-gradient-to-r dark:from-gray-800 dark:via-blue-700 dark:to-gray-900 
+                          text-white px-6 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 shadow-md
+                          hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 {loading ? (
                   // Spinner while loading

@@ -3,10 +3,9 @@ import { motion } from "framer-motion";
 import { Menu, Search, Bell, User } from "lucide-react";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useSelector } from "react-redux";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ toggleSidebar, isOpen }) => {
-
   const { currentUser } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ const Header = ({ toggleSidebar, isOpen }) => {
     <motion.header
       // initial={{ opacity: 0, y: -20 }}
       // animate={{ opacity: 1, y: 0 }}
-      // transition={{ duration: 0.4 }} 
+      // transition={{ duration: 0.4 }}
       className={`fixed right-0 w-full z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 py-4 lg:px-6`}
     >
       <div className="flex items-center justify-between">
@@ -70,14 +69,23 @@ const Header = ({ toggleSidebar, isOpen }) => {
 
           {/* User Profile */}
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600    dark:from-gray-800 dark:via-blue-700 dark:to-gray-900  rounded-full flex items-center justify-center">
-              <button onClick={() => navigate('/signin')}> 
-              <User className="w-4 h-4 text-white" />
-              </button>
-            </div>
+            {currentUser?.avatar ? (
+              <img
+                className="w-8 h-8 rounded-full object-cover"
+                src={currentUser.avatar}
+                alt="User Avatar"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-gray-800 dark:via-blue-700 dark:to-gray-900 rounded-full flex items-center justify-center">
+                <button onClick={() => navigate("/signin")}>
+                  <User className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            )}
+
             <div className="hidden sm:block">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                {currentUser?.username || "Guest"} 
+                {currentUser?.username || "Guest"}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 Administrator

@@ -52,7 +52,7 @@ const DashboardContent = ({ activeSection }) => {
       case "performance":
         return <Section title="Performance" />;
       case "notifications":
-        return <Section title="Notifications" />;
+        return <Section title="notifications" />;
       case "settings":
         return <Settings />;
       default:
